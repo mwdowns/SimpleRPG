@@ -38,7 +38,7 @@ class Character(object):
 
 class Hero(Character):
     def __init__(self):
-        self.name = 'hero'
+        self.name = 'Sir Gawain'
         self.health = 10
         self.power = 5
         self.coins = 20
@@ -67,23 +67,42 @@ class Hero(Character):
             self.power = self.power / 2
 
     def receive_damage(self, points):
-        points -= self.armor
-        self.health -= points
-        print "%s received %d damage." % (self.name, points)
+        evasion = float(0.00)
+        if self.evade == 0:
+            pass
+        elif self.evade >= 1:
+            evasion = float((self.evade - 1) * .05) + .15
+            print "Evasion is %r and self-evade is %d" % (evasion, self.evade)
+        elif self.evade > 14:
+            evasion = float(.8)
+        else:
+            pass
+        evasion_chance = random.random() < evasion
+        #put evasion code here
+        if evasion_chance:
+            points = 0
+            print "Sir Gawain has evaded the attack!"
+            self.health -= points
+        if self.armor > 0 and not evasion_chance:
+            points -= self.armor
+            self.health -= points
+            print "%s received %d damage." % (self.name, points)
+        else:
+            super(Hero, self).receive_damage(points)
         if self.health <= 0:
             print "%s is dead." % self.name
 
 
 class Goblin(Character):
     def __init__(self):
-        self.name = 'goblin'
-        self.health = 6
+        self.name = 'Goblin'
+        self.health = 15
         self.power = 2
         self.coins = 2
 
 class Wizard(Character):
     def __init__(self):
-        self.name = 'wizard'
+        self.name = 'Wizard'
         self.health = 8
         self.power = 1
         self.coins = 4
@@ -116,7 +135,7 @@ class Medic(Character):
 
 class Shadow(Character):
     def __init__(self):
-        self.name = 'shadow'
+        self.name = 'Shadow'
         self.health = 1
         self.power = 1
         self.coins = 3
@@ -132,7 +151,7 @@ class Shadow(Character):
 
 class Zombie(Character):
     def __init__(self):
-        self.name = 'zombie'
+        self.name = 'Zombie'
         self.health = 10
         self.power = 2
         self.coins = 1
@@ -151,7 +170,7 @@ class Zombie(Character):
 class Battle(object):
     def do_battle(self, hero, enemy):
         print "====================="
-        print "Hero faces the %s" % enemy.name
+        print "Sir Gawain faces the %s" % enemy.name
         print "====================="
         while hero.alive() and enemy.alive():
             hero.print_status()
@@ -215,15 +234,15 @@ class Evade(object):
     cost = 5
     name = "evade"
     def apply(self, hero):
-        hero.evade += 2
-        print "%s's evade increased 2 points!" % hero.name
+        hero.evade += 1
+        print "%s's evade increased 1 point!" % hero.name
 
 
 class Store(object):
     # If you define a variable in the scope of a class:
     # This is a class variable and you can access it like
     # Store.items => [Tonic, Sword]
-    items = [Tonic, Sword, SuperTonic, Armor]
+    items = [Tonic, Sword, SuperTonic, Armor, Evade]
     def do_shopping(self, hero):
         while True:
             print "====================="
@@ -244,7 +263,7 @@ class Store(object):
                 hero.buy(item)
 
 hero = Hero()
-enemies = [Goblin(), Goblin()]
+enemies = [Goblin(), Goblin(), Goblin()]
 #enemies = [Goblin(), Wizard(), Medic(), Shadow()]
 battle_engine = Battle()
 shopping_engine = Store()
